@@ -1,82 +1,75 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 
 
-    interface User {
-        id:String;
-        name:String; 
-        mail:String
-    }
+interface User {
+    id: string;
+    name: string;
+    correo: string;
+}
 
 @Controller('users')
 export class UsersController {
+
     private users: User[] = [
         {
             id: '1',
-            name: 'Maria',
-            mail: 'maria@mail.com'
+            name: 'Juan Sebastian ',
+            correo: 'Juan@gmail.com'
         },
+
         {
             id: '2',
-            name: 'Juan',
-            mail: 'juan@mail.com'
+            name: 'Maria pepita',
+            correo: 'maria@gmail.com'
         },
         {
             id: '3',
-            name: 'Ana',
-            mail: 'ana@mail.com'
+            name: 'Pedro Picapiedra',
+            correo: 'pedro@gmail.com'
         },
         {
             id: '4',
-            name: 'Carlos',
-            mail: 'carlos@mail.com'
-        },
-        {
-            id: '5',
-            name: 'Sofia',
-            mail: 'sofia@mail.com'
-        },
-        {
-            id: '6',
-            name: 'Diego',
-            mail: 'diego@mail.com'
+            name: 'Ana Salas',
+            correo: 'ana@gmail.com'
         }
-        
-    
-    ];
-
+    ]
     @Get()
-    getAllUsers(): User[] {
-    return this.users;
+    getUsers(): User[] {
+        return this.users;
     }
-
-    @Get('search/:name')
-    getUserName(@Param('name') name: String): String | undefined {
-        const data= this.users.find(user => user.name === name.toString());
-        return data?.name;
-    }
-
-
-    @Get('search/:mail')
-    getUserMail(@Param('mail') mail: String): String | undefined {
-        const data= this.users.find(user => user.mail === mail.toString());
-        return data?.mail;
-    }
-
     @Get(':id')
-    getUserById(@Param('id') id: String){
+    getUserById(@Param('id') id: string) {
+        console.log('.:: UserID', id);
+        const data= this.users.find((user)=> user.id === id);
+        console.log('.:: data', data);
+        return data;
 
-        console.log ('.:: UserID', id);
-        const data= this.users.find(user => user.id === id.toString());
-        console.log('.:: UserData', data);
-        if data == undefined {
-            return{
-                msg: 'User not found',
-                data: data
-            }
+        return {
+            data: 'Buscando usuario con id',
+
         }
-        return{
-            data: 'user Does Not Exist: ' + id,
-        }
-        
-}
+    
     }
+@Get('search/:name')
+getUserByName(@Param('name') name: string) {
+    console.log('.:: Name', name);
+    const data= this.users.find((user)=> user.name === name);
+    return data?.correo;
+ }
+
+ @Post()
+  createUser(@Body() user: User) {
+    console.log('.:: user: ', user);
+    this.users.push(user);
+    return user;
+  }
+
+@Delete(':id')
+    deleteUser(@Param('id') id: string) {
+        const position = this.users.findIndex((user) => user.id === id);
+        this.users.splice(position, 1);
+        return {
+            msg: "Usuario eliminado correctamente"
+        };
+    }
+}
